@@ -1,26 +1,38 @@
--- --------------------------------------------------------
--- Хост:                         127.0.0.1
--- Версия сервера:               PostgreSQL 17.5 on x86_64-windows, compiled by msvc-19.44.35209, 64-bit
--- Операционная система:         
--- HeidiSQL Версия:              12.11.0.7065
--- --------------------------------------------------------
+-- Schema for Sneaker Shop project
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES  */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- Таблица пользователей
+CREATE TABLE all_users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255),
+    mail VARCHAR(255),
+    phone_number VARCHAR(255),
+    number_of_orders INTEGER DEFAULT 0,
+    sum_orders INTEGER DEFAULT 0
+);
 
--- Экспортируемые данные не выделены.
+-- Таблица кроссовок
+CREATE TABLE sneakers (
+    id SERIAL PRIMARY KEY,
+    sneakers_name VARCHAR(255),
+    count_of_sneakers INTEGER DEFAULT 0,
+    sum_sneakers INTEGER DEFAULT 0
+);
 
--- Экспортируемые данные не выделены.
-
--- Экспортируемые данные не выделены.
-
-/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+-- Таблица активных заказов
+CREATE TABLE active_orders (
+    id SERIAL PRIMARY KEY,
+    id_client INTEGER NOT NULL,
+    client_name VARCHAR(255),
+    name_allsneakers VARCHAR(255),
+    status VARCHAR(255),
+    CONSTRAINT active_orders_id_client_fkey FOREIGN KEY (id_client)
+        REFERENCES all_users (id) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT active_orders_status_check CHECK (
+        status IN (
+            'Заказ поступил',
+            'Сборка заказа',
+            'Заказ отправлен',
+            'Завершён'
+        )
+    )
+);
